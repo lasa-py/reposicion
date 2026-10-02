@@ -18,10 +18,24 @@
   html, body { margin: 0; height: 100%; background: #FFFFFF; }
   body { padding-top: env(safe-area-inset-top, 0px); box-sizing: border-box; }
   iframe { display: block; border: 0; width: 100%; height: 100%; }
+  /* mientras Google arranca la app (2-4 s) se ve esto en vez de la pantalla blanca (Marly, 02/10).
+     Se saca cuando la app avisa "losabuelos-listo"; si el aviso no llega, a los 12 s igual. */
+  .espera { position: fixed; inset: 0; z-index: 2; background: #FFFFFF; display: grid; place-content: center; gap: 10px; justify-items: center;
+    font: 500 16px system-ui, -apple-system, "Segoe UI", sans-serif; color: #5C675F; }
+  .espera img { width: 56px; height: 56px; border-radius: 12px; }
 </style>
 </head>
 <body>
+<div class="espera"><img src="icon-192.png" alt="">Cargando Los Abuelos…</div>
 <iframe src="https://script.google.com/macros/s/AKfycbzn5ch9nlQ5UtMlZnTlJgX08d2SSbzSDSZDizCYwy58IJRVjeoUN38-MFIVYUJu16Qd3Q/exec"
         title="Reposición entre sucursales" allow="clipboard-write"></iframe>
+<script>
+  (function () {
+    var e = document.querySelector(".espera");
+    function sacar() { if (e) { e.remove(); e = null; } }
+    window.addEventListener("message", function (m) { if (m.data === "losabuelos-listo") sacar(); });
+    setTimeout(sacar, 12000);
+  })();
+</script>
 </body>
 </html>
